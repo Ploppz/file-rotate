@@ -28,8 +28,10 @@ fn timestamp_max_files_rotation() {
         &log_path,
         AppendTimestamp::default(FileLimit::MaxFiles(4)),
         ContentLimit::Lines(2),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     // Write 9 lines
@@ -65,7 +67,7 @@ fn timestamp_max_files_rotation() {
     assert_eq!("m\n", fs::read_to_string(&log_path).unwrap());
 }
 #[test]
-#[cfg(feature = "chrono04")]
+#[cfg(feature = "time")]
 fn timestamp_max_age_deletion() {
     // In order not to have to sleep, and keep it deterministic, let's already create the log files and see how FileRotate
     // cleans up the old ones.
@@ -74,9 +76,7 @@ fn timestamp_max_age_deletion() {
     let log_path = dir.join("log");
 
     // One recent file:
-    let recent_file = chrono::offset::Local::now()
-        .format("log.%Y%m%dT%H%M%S")
-        .to_string();
+    let recent_file = Local::now().format("log.%Y%m%dT%H%M%S").to_string();
     File::create(dir.join(&recent_file)).unwrap();
     // Two very old files:
     File::create(dir.join("log.20200825T151133")).unwrap();
@@ -113,8 +113,10 @@ fn count_max_files_rotation() {
         &*log_path.to_string_lossy(),
         AppendCount::new(4),
         ContentLimit::Lines(2),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     // Write 9 lines
@@ -154,8 +156,10 @@ fn rotate_to_deleted_directory() {
         &*log_path.to_string_lossy(),
         AppendCount::new(4),
         ContentLimit::Lines(1),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     write!(log, "a\nb\n").unwrap();
@@ -184,8 +188,10 @@ fn write_complete_record_until_bytes_surpassed() {
         &log_path,
         AppendCount::new(100),
         ContentLimit::BytesSurpassed(1),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     write!(log, "0123456789").unwrap();
@@ -211,7 +217,8 @@ fn compression_on_rotation() {
         AppendCount::new(3),
         ContentLimit::Lines(1),
         Compression::OnRotate(1), // Keep one file uncompressed
-        #[cfg(unix)] None,
+        #[cfg(unix)]
+        None,
     );
 
     writeln!(log, "A").unwrap();
@@ -254,8 +261,10 @@ fn no_truncate() {
             &*log_path.to_string_lossy(),
             AppendCount::new(3),
             ContentLimit::Lines(10000),
-            #[cfg(feature = "compression")] Compression::None,
-            #[cfg(unix)] None,
+            #[cfg(feature = "compression")]
+            Compression::None,
+            #[cfg(unix)]
+            None,
         )
     };
     writeln!(file_rotate(), "A").unwrap();
@@ -280,8 +289,10 @@ fn byte_count_recalculation() {
         &*log_path.to_string_lossy(),
         AppendCount::new(3),
         ContentLimit::Bytes(2),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     write!(file_rotate, "bc").unwrap();
@@ -308,8 +319,10 @@ fn line_count_recalculation() {
         &*log_path.to_string_lossy(),
         AppendCount::new(3),
         ContentLimit::Lines(2),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     // A single line existed before the new logger ('a')
@@ -375,8 +388,10 @@ fn manual_rotation() {
         &*log_path.to_string_lossy(),
         AppendCount::new(3),
         ContentLimit::None,
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
     writeln!(log, "A").unwrap();
     log.rotate().unwrap();
@@ -402,8 +417,10 @@ fn arbitrary_lines(count: usize) {
         &log_path,
         AppendCount::new(100),
         ContentLimit::Lines(count),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     for _ in 0..count - 1 {
@@ -427,8 +444,10 @@ fn arbitrary_bytes(count: usize) {
         &log_path,
         AppendCount::new(100),
         ContentLimit::Bytes(count),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     for _ in 0..count {
@@ -513,8 +532,10 @@ fn test_file_limit() {
         log_path,
         AppendTimestamp::with_format("%Y-%m-%d", FileLimit::MaxFiles(1), DateFrom::DateYesterday),
         ContentLimit::Time(TimeFrequency::Daily),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     mock_time::set_mock_time(first);
@@ -541,8 +562,10 @@ fn test_panic() {
             &log_path,
             AppendCount::new(2),
             ContentLimit::None,
-            #[cfg(feature = "compression")] Compression::None,
-            #[cfg(unix)] None,
+            #[cfg(feature = "compression")]
+            Compression::None,
+            #[cfg(unix)]
+            None,
         );
 
         write!(log, "nineteen characters").unwrap();
@@ -553,8 +576,10 @@ fn test_panic() {
         &log_path,
         AppendCount::new(2),
         ContentLimit::Bytes(8),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     write!(log, "0123").unwrap();
@@ -596,8 +621,10 @@ fn test_time_frequency(
         &log_path,
         AppendTimestamp::with_format("%Y-%m-%d_%H-%M-%S", FileLimit::MaxFiles(7), date_from),
         ContentLimit::Time(frequency),
-        #[cfg(feature = "compression")] Compression::None,
-        #[cfg(unix)] None,
+        #[cfg(feature = "compression")]
+        Compression::None,
+        #[cfg(unix)]
+        None,
     );
 
     writeln!(log, "a").unwrap();

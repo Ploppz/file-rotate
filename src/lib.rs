@@ -390,14 +390,17 @@ impl<Repr: Representation> PartialOrd for SuffixInfo<Repr> {
 pub struct FileRotate<S: SuffixScheme> {
     basepath: PathBuf,
     file: Option<File>,
-    #[cfg(feature = "time")] modified: Option<DateTime<Local>>,
+    #[cfg(feature = "time")]
+    modified: Option<DateTime<Local>>,
     content_limit: ContentLimit,
     count: usize,
-    #[cfg(feature = "compression")] compression: Compression,
+    #[cfg(feature = "compression")]
+    compression: Compression,
     suffix_scheme: S,
     /// The bool is whether or not there's a .gz suffix to the filename
     suffixes: BTreeSet<SuffixInfo<S::Repr>>,
-    #[cfg(unix)] mode: Option<u32>,
+    #[cfg(unix)]
+    mode: Option<u32>,
 }
 
 impl<S: SuffixScheme> FileRotate<S> {
@@ -425,7 +428,8 @@ impl<S: SuffixScheme> FileRotate<S> {
             ContentLimit::Lines(lines) => {
                 assert!(lines > 0);
             }
-            #[cfg(feature = "time")] ContentLimit::Time(_) => {}
+            #[cfg(feature = "time")]
+            ContentLimit::Time(_) => {}
             ContentLimit::BytesSurpassed(bytes) => {
                 assert!(bytes > 0);
             }
@@ -437,14 +441,17 @@ impl<S: SuffixScheme> FileRotate<S> {
 
         let mut s = Self {
             file: None,
-            #[cfg(feature = "time")] modified: None,
+            #[cfg(feature = "time")]
+            modified: None,
             basepath,
             content_limit,
             count: 0,
-            #[cfg(feature = "compression")] compression,
+            #[cfg(feature = "compression")]
+            compression,
             suffixes: BTreeSet::new(),
             suffix_scheme,
-            #[cfg(unix)] mode,
+            #[cfg(unix)]
+            mode,
         };
         s.ensure_log_directory_exists();
         s.scan_suffixes();
